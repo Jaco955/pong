@@ -1,4 +1,6 @@
 import turtle
+import tkinter
+from tkinter import messagebox
 import time
 
 wn = turtle.Screen()
@@ -69,30 +71,40 @@ wn.onkeypress(press_Down, "Down")
 wn.onkeyrelease(release_Down, "Down")
 
 def move_paddles():
-    if keys["w"] and paddle_a.ycor() < 340:
+    if keys["w"] and paddle_a.ycor() < 310:
         paddle_a.sety(paddle_a.ycor() + 8)
-    if keys["s"] and paddle_a.ycor() > -340:
+    if keys["s"] and paddle_a.ycor() > -310:
         paddle_a.sety(paddle_a.ycor() - 8)
-
-    if keys["Up"] and paddle_b.ycor() < 340:
+    if keys["Up"] and paddle_b.ycor() < 310:
         paddle_b.sety(paddle_b.ycor() + 8)
-    if keys["Down"] and paddle_b.ycor() > -340:
+    if keys["Down"] and paddle_b.ycor() > -310:
         paddle_b.sety(paddle_b.ycor() - 8)
 
-
-points_str = str(score_a) + "       " + str(score_b)
 points = turtle.Turtle()
 points.penup()
-points.goto(0,0)
+points.goto(0,230)
 points.color("white")
-
-points.write(points_str, align="center", font=("Arial", 24, "bold"))
+points.write("0       0", align="center", font=("Arial", 24, "bold"))
 turtle.hideturtle()
 
+def update_score():
+    points.clear() 
+    points.write(f"{score_a}       {score_b}", align="center", font=("Arial", 24, "bold"))
 
 while True:
-    if(score_a == 10 or score_b==10):
-        break
+    if score_a == 10 or score_b==10:
+        winner = "Red Player" if score_a == 10 else "Blue Player"
+        var = messagebox.askyesno("Nice game dude!!", f"{winner} wins!\nPlay again?")
+        print(var)
+        if (var):
+            score_a =0
+            score_b =0
+            update_score()
+            ball.goto(0,0)
+            paddle_a.goto(-450,0)
+            paddle_b.goto(450,0)
+        else:
+            break
     start_time = time.time()
 
     wn.update()
@@ -101,12 +113,12 @@ while True:
     ball.setx(ball.xcor() + ball.dx)
     ball.sety(ball.ycor() + ball.dy)
 
-    if ball.ycor() > 350:
-        ball.sety(350)
+    if ball.ycor() > 320:
+        ball.sety(320)
         ball.dy *= -1
 
-    if ball.ycor() < -350:
-        ball.sety(-350)
+    if ball.ycor() < -320:
+        ball.sety(-320)
         ball.dy *= -1
 
     if ball.xcor() > 490:
@@ -114,22 +126,16 @@ while True:
         ball.dx *= -1
         score_a += 1
         print(f"Red player: {score_a} | Blue player: {score_b}")
+        update_score()
         
-        points_str = str(score_a) + "      " + str(score_b)
-        points.undo()
-        points.write(points_str, align="center", font=("Arial", 24, "bold"))
-        turtle.hideturtle()
 
 
     if ball.xcor() < -490:
-        ball.goto (0,0)
+        ball.goto(0, 0)
         ball.dx *= -1
         score_b += 1
-        points_str = str(score_a) + "      " + str(score_b)
         print(f"Red player: {score_a} | Blue player: {score_b}")
-        points.undo()
-        points.write(points_str, align="center", font=("Arial", 24, "bold"))
-        turtle.hideturtle()
+        update_score()
 
 
     if (ball.xcor() >= 435 and ball.xcor() <=450) and (ball.ycor() <= paddle_b.ycor() + 60 and ball.ycor() >= paddle_b.ycor() - 60):
