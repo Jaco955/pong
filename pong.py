@@ -4,7 +4,7 @@ from tkinter import messagebox
 import time
 
 wn = turtle.Screen()
-wn.title ("Pongsito Insanito")
+wn.title ("Rolo-Pong")
 wn.bgcolor("black")
 wn.setup(width=1000, height=600)
 wn.tracer(0)
