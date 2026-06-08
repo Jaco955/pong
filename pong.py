@@ -37,6 +37,8 @@ ball.dy = 6
 
 score_a = 0
 score_b = 0
+easter67 = False
+easter76 = False
 
 keys = {
     "w": False,
@@ -97,6 +99,9 @@ while True:
         var = messagebox.askyesno("Nice game dude!!", f"{winner} wins!\nPlay again?")
         print(var)
         if (var):
+                        
+            easter67 = False
+            easter76 = False
             score_a =0
             score_b =0
             update_score()
@@ -106,6 +111,25 @@ while True:
         else:
             break
     start_time = time.time()
+
+
+    if(score_a == 6 and score_b==7 and easter67 == False):
+        #6 7 easter egg
+        if messagebox.askyesno ("really?", "was this intentional??"):
+            messagebox.showinfo ("alr bet", "ok dude, i trust you")
+            
+        else:
+            messagebox.showinfo ("what a strange coincidence, huh?", "6767676767676767676767676767676767676767676767")
+            
+        easter67 = True
+
+    if(score_b == 6 and score_a==7 and easter76==False):
+        #76ers eastregg
+        if messagebox.askyesno ("lil question here", "do you like the philadelfia 76ers?"):
+            messagebox.showinfo ("yayy", "you know ball bro")
+        else:
+            messagebox.showinfo ("are you joking now?", "go google them NOW BRO")
+        easter76 = True
 
     wn.update()
     move_paddles()
