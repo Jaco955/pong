@@ -40,6 +40,10 @@ score_b = 0
 easter67 = False
 easter76 = False
 
+pause = False
+game_started = False 
+ball_delay_frames = 0
+
 keys = {
     "w": False,
     "s": False,
@@ -59,6 +63,16 @@ def release_Up(): keys["Up"] = False
 def press_Down(): keys["Down"] = True
 def release_Down(): keys["Down"] = False
 
+def toggle_pause():
+    global pause
+    if not game_started: return 
+    pause = not pause
+    if pause:
+        pause_text.write("PAUSED", align="center", font=("Arial", 28, "bold"))
+    else:
+        pause_text.clear()
+    wn.listen()
+
 wn.listen()
 wn.onkeypress(press_w, "w")
 wn.onkeyrelease(release_w, "w")
@@ -71,6 +85,8 @@ wn.onkeyrelease(release_Up, "Up")
 
 wn.onkeypress(press_Down, "Down")
 wn.onkeyrelease(release_Down, "Down")
+
+wn.onkeypress(toggle_pause, "space")
 
 def move_paddles():
     if keys["w"] and paddle_a.ycor() < 310:
@@ -86,20 +102,76 @@ points = turtle.Turtle()
 points.penup()
 points.goto(0,230)
 points.color("white")
-points.write("0       0", align="center", font=("Arial", 24, "bold"))
-turtle.hideturtle()
+points.hideturtle()
+
+pause_text = turtle.Turtle()
+pause_text.penup()
+pause_text.goto(0,-30)
+pause_text.color("yellow")
+pause_text.hideturtle()
+
+menu_art = turtle.Turtle()
+menu_art.speed(0)
+menu_art.color("white")
+menu_art.penup()
+menu_art.hideturtle()
+
+def draw_menu():
+    menu_art.clear()
+    menu_art.goto(0, 120)
+    menu_art.color("cyan")
+    menu_art.write("ROLO-PONG", align="center", font=("Arial", 50, "bold"))
+    
+    menu_art.goto(0, -40)
+    menu_art.shape("square")
+    menu_art.color("green")
+    menu_art.shapesize(stretch_wid=5, stretch_len=9)
+    menu_art.stamp()
+    
+    menu_art.goto(0, -52)
+    menu_art.color("white")
+    menu_art.write("START GAME :D", align="center", font=("Arial", 16, "bold"))
+
+def detect_button_click(x, y):
+    global game_started
+    if not game_started:
+        if -90 <= x <= 90 and -90 <= y <= 10:
+            menu_art.clear() 
+            points.write("0       0", align="center", font=("Arial", 24, "bold")) 
+            game_started = True
+            wn.listen() 
+
+wn.onclick(detect_button_click) 
 
 def update_score():
     points.clear() 
     points.write(f"{score_a}       {score_b}", align="center", font=("Arial", 24, "bold"))
 
+draw_menu()
+
+paddle_a.hideturtle()
+paddle_b.hideturtle()
+ball.hideturtle()
+
+elements_shown = False
+
 while True:
+    if not game_started:
+        wn.update()
+        time.sleep(1/60)
+        continue
+    
+    if game_started and not elements_shown:
+        paddle_a.showturtle()
+        paddle_b.showturtle()
+        ball.showturtle()
+        elements_shown = True
+
     if score_a == 10 or score_b==10:
         winner = "Red Player" if score_a == 10 else "Blue Player"
         var = messagebox.askyesno("Nice game dude!!", f"{winner} wins!\nPlay again?")
         print(var)
         if (var):
-                        
             easter67 = False
             easter76 = False
             score_a =0
@@ -108,34 +180,43 @@ while True:
             ball.goto(0,0)
             paddle_a.goto(-450,0)
             paddle_b.goto(450,0)
+            pause = False
+            pause_text.clear()
+            ball_delay_frames = 0
+            wn.listen()
         else:
             break
     start_time = time.time()
 
+    if pause:
+        wn.update()
+        time.sleep(1/60)
+        continue
 
     if(score_a == 6 and score_b==7 and easter67 == False):
-        #6 7 easter egg
         if messagebox.askyesno ("really?", "was this intentional??"):
             messagebox.showinfo ("alr bet", "ok dude, i trust you")
-            
         else:
             messagebox.showinfo ("what a strange coincidence, huh?", "6767676767676767676767676767676767676767676767")
-            
         easter67 = True
+        wn.listen()
 
     if(score_b == 6 and score_a==7 and easter76==False):
-        #76ers eastregg
         if messagebox.askyesno ("lil question here", "do you like the philadelfia 76ers?"):
             messagebox.showinfo ("yayy", "you know ball bro")
         else:
             messagebox.showinfo ("are you joking now?", "go google them NOW BRO")
         easter76 = True
+        wn.listen()
 
     wn.update()
     move_paddles()
 
-    ball.setx(ball.xcor() + ball.dx)
-    ball.sety(ball.ycor() + ball.dy)
+    if ball_delay_frames > 0:
+        ball_delay_frames -= 1
+    else:
+        ball.setx(ball.xcor() + ball.dx)
+        ball.sety(ball.ycor() + ball.dy)
 
     if ball.ycor() > 320:
         ball.sety(320)
@@ -151,8 +232,7 @@ while True:
         score_a += 1
         print(f"Red player: {score_a} | Blue player: {score_b}")
         update_score()
-        
-
+        ball_delay_frames = 90
 
     if ball.xcor() < -490:
         ball.goto(0, 0)
@@ -160,7 +240,7 @@ while True:
         score_b += 1
         print(f"Red player: {score_a} | Blue player: {score_b}")
         update_score()
-
+        ball_delay_frames = 90
 
     if (ball.xcor() >= 435 and ball.xcor() <=450) and (ball.ycor() <= paddle_b.ycor() + 60 and ball.ycor() >= paddle_b.ycor() - 60):
         if ball.dx > 0:
