@@ -1,6 +1,6 @@
 # Rolo-Pong
 ## Alr, at the moment im writing this readme, my project is made in python, and i used Tkinter, random, turtle and time to make the main functions.
-## The game includes a score board that saves the current score of the match, which ends when one player reaches 10 points, an infinite 1v1 match (can exit by pausing and clicking on thw quit button) and a layer VS CPU mode, that features matches against an easy, medium and hard bots!!
+## The game includes a score board that saves the current score of the match, which ends when one player reaches 10 points, an infinite 1v1 match (can exit by pausing and clicking on the quit button) and a player VS CPU mode, that features matches against an easy, medium and hard bots!!
 ## I suggest to play the game in full screen for a better experience.
 # CONTROLS
 # In main menu
